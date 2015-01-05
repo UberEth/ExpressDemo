@@ -9,3 +9,5 @@ var app = express()
     .use(serveStatic(__dirname + '/public'))
     .use(serveIndex(__dirname + '/public'))
     .listen(3000);
+
+console.log("Server Started");
