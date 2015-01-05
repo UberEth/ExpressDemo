@@ -7,7 +7,6 @@ var cookieParser = require('cookie-parser');
 var cookieSession = require('cookie-session');
 var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
-var compression = require('compression');
 var https = require('https');
 var http  = require('http');
 
@@ -87,5 +86,18 @@ var options = {
 };
 
 /* Spin up Servers */
-server = http.createServer(app).listen(80);
-server_2 = https.createServer(options, app).listen(443);
+try{
+    server = http.createServer(app).listen(80);
+    console.log("HTTP Server Started on Port 80");
+}
+catch(e){
+    console.log("Unable to Start Server on port 80");
+}
+
+try {
+    server_2 = https.createServer(options, app).listen(443);
+    console.log("HTTPS Server Started on Port 443");
+}
+catch(e){
+    consol.log("Unable to Start HTTPS Server")
+}
