@@ -16,8 +16,46 @@ var fs = require('fs');
 var app = express()
     .use(serveStatic(__dirname + '/public'))    //static roots
     .use(serveIndex(__dirname + '/public'))     //static filesystem
-    .use(bodyParser())
+    .use(bodyParser())                          //deprecated, should find alternatives
     .use(cookieParser('A019IR56w#$HA12345ABhG','STPIsTheRacersEdge')) //can digitally sign cookies
+    .use(cookieSession({
+            keys: ['NowIsTheTimeToNodeAllDay12']
+        })) //digitally sign the session cookie
+    .use('/home', function (req, res) {
+        if (req.session.views) {
+            req.session.views++;
+        }
+        else{
+            req.session.views = 1;
+        }
+        res.end('Total views for you: ' + req.session.views + ' \n');
+    })
+    .use('/reset',function(req,res){
+        delete req.session.views;
+        res.end('Cleared all your views');
+    })
+    .use('/toggle', function (req, res) {
+
+        if (req.cookies.name) {
+            res.clearCookie('name');
+            res.end('name cookie cleared! Was:' + req.cookies.name);
+        }
+        else {
+            res.cookie('name', 'fooBar');
+            res.end('name cookie set!');
+        }
+    })
+    .use('/signed', function (req, res) {
+        if (req.signedCookies.name) {
+            res.clearCookie('name');
+            res.end('name cookie cleared! Was:' + req.signedCookies.name);
+        }
+        else {
+            res.cookie('name', 'foobar96', { maxage: 900000, signed: true, httpOnly:true });
+
+            res.end('name cookie set!' + res.cookies);
+        }
+    })
     .use(function (req, res) {
 
         if(req.cookies.parsed){
@@ -41,8 +79,6 @@ var app = express()
         res.end('Invalid body!\n');
     })
 ;
-
-
 
 /* public & private keys */
 var options = {
