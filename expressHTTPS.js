@@ -16,6 +16,8 @@ var fs = require('fs');
 var app = express()
     .use(serveStatic(__dirname + '/public'))    //static roots
     .use(serveIndex(__dirname + '/public'))     //static filesystem
+    .use(bodyParser())
+    .use(cookieParser('A019IR56w#$HA12345ABhG','STPIsTheRacersEdge')) //can digitally sign cookies
     .use(function (req, res) {
 
         if(req.cookies.parsed){
