@@ -14,8 +14,30 @@ var http  = require('http');
 var fs = require('fs');
 
 var app = express()
-    .use(serveStatic(__dirname + '/public'))
-    .use(serveIndex(__dirname + '/public'))
+    .use(serveStatic(__dirname + '/public'))    //static roots
+    .use(serveIndex(__dirname + '/public'))     //static filesystem
+    .use(function (req, res) {
+
+        if(req.cookies.parsed){
+            console.log('Already Parsed:', req.cookies.parsed);
+        }
+        else {
+            console.log('First Pass');
+        }
+
+        if (req.body.foo) {
+            res.cookie('parsed','yes', {maxAge:900000, httpOnly:true});
+            res.end('Body parsed! Value of foo: ' + req.body.foo + '\n');
+        }
+        else {
+            console.log('---client request cookies header:\n', req.headers['cookie']);
+            res.cookie('parsed','no');
+            res.end('Body does not have foo!\n');
+        }
+    })
+    .use(function (err, req, res, next) {
+        res.end('Invalid body!\n');
+    })
 ;
 
 
