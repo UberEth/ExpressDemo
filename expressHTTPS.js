@@ -33,7 +33,7 @@ var app = express()
     .use(cookieSession({
             keys: ['NowIsTheTimeToNodeAllDay12']
         })) //digitally sign the session cookie
-    .use('/home', homeHandler(req, res))
+    .use('/home', function (req, res) {homeHandler(req,res);})
     .use('/reset',function(req,res){
         delete req.session.views;
         res.end('Cleared all your views');
