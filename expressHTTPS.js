@@ -12,6 +12,19 @@ var http  = require('http');
 
 var fs = require('fs');
 
+//Define Middleware
+//Increments session state variable for each 'get'
+homeHandler = function (req, res) {
+    if (req.session.views) {
+        req.session.views++;
+    }
+    else {
+        req.session.views = 1;
+    }
+    res.end('Total views for you: ' + req.session.views + ' \n');
+}
+
+//Configure Middleware App
 var app = express()
     .use(serveStatic(__dirname + '/public'))    //static roots
     .use(serveIndex(__dirname + '/public'))     //static filesystem
@@ -20,15 +33,7 @@ var app = express()
     .use(cookieSession({
             keys: ['NowIsTheTimeToNodeAllDay12']
         })) //digitally sign the session cookie
-    .use('/home', function (req, res) {
-        if (req.session.views) {
-            req.session.views++;
-        }
-        else{
-            req.session.views = 1;
-        }
-        res.end('Total views for you: ' + req.session.views + ' \n');
-    })
+    .use('/home', homeHandler(req, res))
     .use('/reset',function(req,res){
         delete req.session.views;
         res.end('Cleared all your views');
