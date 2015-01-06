@@ -114,9 +114,13 @@ var options = {
 };
 
 /* Spin up Servers */
+var server_port = process.env.YOUR_PORT || process.env.PORT || 3000;
+var server_host = process.env.YOUR_HOST || '0.0.0.0';
 try{
-    server = http.createServer(app).listen(3000);
-    console.log("HTTP Server Started on Port 3000");
+    //Heroku Hack
+    server = http.createServer(app).listen(server_port, server_host, function() {
+        console.log("HTTP Server Started on Port 3000");
+    });
 }
 catch(e){
     console.log("Unable to Start Server on port 80:" + e);
