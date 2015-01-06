@@ -72,12 +72,15 @@ cookieJunk = function(req,res){
 try {
     var app = express()
             .use(serveStatic(__dirname + '/public'))                            //static roots
-            .use(serveIndex(__dirname + '/public'))                             //static filesystem
+            .use(serveIndex(__dirname +  '/public'))                             //static filesystem
             .use(bodyParser())                                                  //deprecated, should find alternatives
             .use(cookieParser('A019IR56w#$HA12345ABhG', 'STPIsTheRacersEdge'))   //can digitally sign cookies
             .use(cookieSession({keys: ['NowIsTheTimeToNodeAllDay12']}))         //digitally sign the session cookie
             .use('/home', function (req, res) {
                 homeHandler(req, res);
+            })
+            .use('/redirect', function (req,res){                                //hardcoded redirect
+                res.redirect('/index.html');
             })
             .use('/reset', function (req, res) {
                 delete req.session.views;
