@@ -14,6 +14,7 @@ var fs = require('fs');
 
 //Define Middleware
 //Increments session state variable for each 'get'
+
 homeHandler = function (req, res) {
     if (req.session.views) {
         req.session.views++;
@@ -22,67 +23,84 @@ homeHandler = function (req, res) {
         req.session.views = 1;
     }
     res.end('Total views for you: ' + req.session.views + ' \n');
-}
+};
+
+toggleHandler = function(req, res){
+    if (req.cookies.name) {
+        res.clearCookie('name');
+        res.end('name cookie cleared! Was:' + req.cookies.name);
+    }
+    else {
+        res.cookie('name', 'fooBar');
+        res.end('name cookie set!');
+    }
+};
+
+signedHandler = function(req, res){
+    if (req.signedCookies.name) {
+        res.clearCookie('name');
+        res.end('name cookie cleared! Was:' + req.signedCookies.name);
+    }
+    else {
+        res.cookie('name', 'foobar96', { maxage: 900000, signed: true, httpOnly:true });
+
+        res.end('name cookie set!' + res.cookies);
+    }
+};
+
+cookieJunk = function(req,res){
+    if(req.cookies.parsed){
+        console.log('Already Parsed:', req.cookies.parsed);
+    }
+    else {
+        console.log('First Pass');
+    }
+
+    if (req.body.foo) {
+        res.cookie('parsed','yes', {maxAge:900000, httpOnly:true});
+        res.end('Body parsed! Value of foo: ' + req.body.foo + '\n');
+    }
+    else {
+        console.log('---client request cookies header:\n', req.headers['cookie']);
+        res.cookie('parsed','no');
+        res.end('Body does not have foo!\n');
+    }
+};
+
 
 //Configure Middleware App
-var app = express()
-    .use(serveStatic(__dirname + '/public'))    //static roots
-    .use(serveIndex(__dirname + '/public'))     //static filesystem
-    .use(bodyParser())                          //deprecated, should find alternatives
-    .use(cookieParser('A019IR56w#$HA12345ABhG','STPIsTheRacersEdge')) //can digitally sign cookies
-    .use(cookieSession({
-            keys: ['NowIsTheTimeToNodeAllDay12']
-        })) //digitally sign the session cookie
-    .use('/home', function (req, res) {homeHandler(req,res);})
-    .use('/reset',function(req,res){
-        delete req.session.views;
-        res.end('Cleared all your views');
-    })
-    .use('/toggle', function (req, res) {
-
-        if (req.cookies.name) {
-            res.clearCookie('name');
-            res.end('name cookie cleared! Was:' + req.cookies.name);
-        }
-        else {
-            res.cookie('name', 'fooBar');
-            res.end('name cookie set!');
-        }
-    })
-    .use('/signed', function (req, res) {
-        if (req.signedCookies.name) {
-            res.clearCookie('name');
-            res.end('name cookie cleared! Was:' + req.signedCookies.name);
-        }
-        else {
-            res.cookie('name', 'foobar96', { maxage: 900000, signed: true, httpOnly:true });
-
-            res.end('name cookie set!' + res.cookies);
-        }
-    })
-    .use(function (req, res) {
-
-        if(req.cookies.parsed){
-            console.log('Already Parsed:', req.cookies.parsed);
-        }
-        else {
-            console.log('First Pass');
-        }
-
-        if (req.body.foo) {
-            res.cookie('parsed','yes', {maxAge:900000, httpOnly:true});
-            res.end('Body parsed! Value of foo: ' + req.body.foo + '\n');
-        }
-        else {
-            console.log('---client request cookies header:\n', req.headers['cookie']);
-            res.cookie('parsed','no');
-            res.end('Body does not have foo!\n');
-        }
-    })
-    .use(function (err, req, res, next) {
-        res.end('Invalid body!\n');
-    })
-;
+try {
+    var app = express()
+            .use(serveStatic(__dirname + '/public'))                            //static roots
+            .use(serveIndex(__dirname + '/public'))                             //static filesystem
+            .use(bodyParser())                                                  //deprecated, should find alternatives
+            .use(cookieParser('A019IR56w#$HA12345ABhG', 'STPIsTheRacersEdge'))   //can digitally sign cookies
+            .use(cookieSession({keys: ['NowIsTheTimeToNodeAllDay12']}))         //digitally sign the session cookie
+            .use('/home', function (req, res) {
+                homeHandler(req, res);
+            })
+            .use('/reset', function (req, res) {
+                delete req.session.views;
+                res.end('Cleared all your views');
+            })
+            .use('/toggle', function (req, res) {
+                toggleHandler(req, res);
+            })
+            .use('/signed', function (req, res) {
+                signedHandler(req, res);
+            })
+            .use(function (req, res) {
+                cookieJunk(req, res);
+            })
+            .use(function (err, req, res, next) {
+                res.end('Invalid body!\n');
+            })
+        ;
+    Console.log("Middleware Configured");
+}
+catch(e){
+    Console.log("Middleware Configuration Error:" + e);
+}
 
 /* public & private keys */
 var options = {
@@ -96,7 +114,7 @@ try{
     console.log("HTTP Server Started on Port 80");
 }
 catch(e){
-    console.log("Unable to Start Server on port 80");
+    console.log("Unable to Start Server on port 80:" + e);
 }
 
 try {
@@ -104,5 +122,5 @@ try {
     console.log("HTTPS Server Started on Port 443");
 }
 catch(e){
-    consol.log("Unable to Start HTTPS Server")
+    consol.log("Unable to Start HTTPS Server: " + e)
 }
