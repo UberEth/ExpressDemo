@@ -130,9 +130,9 @@ catch(e){
 }
 
 try {// HTTPS
-    https.createServer(options, app).listen(secure_server_port, server_host, function() {
-    console.log("HTTP Server Started on host: " + server_host + " Port: " + secure_server_port);
-});
+    //https.createServer(options, app).listen(secure_server_port, server_host, function() {
+    //console.log("HTTPS Server Started on host: " + server_host + " Port: " + secure_server_port);
+    //});
 
 }
 catch(e){
