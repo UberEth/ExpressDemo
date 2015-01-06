@@ -96,10 +96,10 @@ try {
                 res.end('Invalid body!\n');
             })
         ;
-    Console.log("Middleware Configured");
+    console.log("Middleware Configured");
 }
 catch(e){
-    Console.log("Middleware Configuration Error:" + e);
+    console.log("Middleware Configuration Error:" + e);
 }
 
 /* public & private keys */
@@ -122,5 +122,5 @@ try {
     console.log("HTTPS Server Started on Port 443");
 }
 catch(e){
-    consol.log("Unable to Start HTTPS Server: " + e)
+    console.log("Unable to Start HTTPS Server: " + e)
 }
