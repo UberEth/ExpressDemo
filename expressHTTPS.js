@@ -73,11 +73,11 @@ cookieJunk = function(req,res){
 //Configure Middleware App
 try {
     var app = express()
-            .use(serveStatic(__dirname + '/public'))                            //static roots
+            .use(serveStatic(__dirname + '/public'))                             //static roots
             .use(serveIndex(__dirname +  '/public'))                             //static filesystem
-            .use(bodyParser())                                                  //deprecated, should find alternatives
+            .use(bodyParser())                                                   //deprecated, should find alternatives
             .use(cookieParser('A019IR56w#$HA12345ABhG', 'STPIsTheRacersEdge'))   //can digitally sign cookies
-            .use(cookieSession({keys: ['NowIsTheTimeToNodeAllDay12']}))         //digitally sign the session cookie
+            .use(cookieSession({keys: ['NowIsTheTimeToNodeAllDay12']}))          //digitally sign the session cookie
             .use('/home', function (req, res) {
                 homeHandler(req, res);
             })
@@ -115,17 +115,19 @@ var options = {
 
 /* Spin up Servers */
 try{
-    server = http.createServer(app).listen(80);
-    console.log("HTTP Server Started on Port 80");
+    server = http.createServer(app).listen(3000);
+    console.log("HTTP Server Started on Port 3000");
 }
 catch(e){
     console.log("Unable to Start Server on port 80:" + e);
 }
 
 try {
-    server_2 = https.createServer(options, app).listen(443);
-    console.log("HTTPS Server Started on Port 443");
+    //server_2 = https.createServer(options, app).listen(443);
+    //console.log("HTTPS Server Started on Port 443");
 }
 catch(e){
     console.log("Unable to Start HTTPS Server: " + e)
+
+
 }
