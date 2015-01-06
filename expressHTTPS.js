@@ -49,6 +49,20 @@ signedHandler = function(req, res){
     }
 };
 
+headerHandler = function(req,res){
+    dumpHeaders(req,res);
+    res.end("Header Dump\n")
+}
+
+dumpHeaders = function(req,res){
+    res.write("<Request Headers\>"+ "\n");
+
+    var reqJason = JSON.parse(JSON.stringify(req.headers));
+    for(var myKey in reqJason) res.write(myKey + ": " + reqJason[myKey] + "\n");
+
+    res.write("\</Request Headers\>\n")
+}
+
 //just goofing around
 cookieJunk = function(req,res){
     if(req.cookies.parsed){
@@ -57,7 +71,6 @@ cookieJunk = function(req,res){
     else {
         console.log('First Pass');
     }
-
     if (req.body.foo) {
         res.cookie('parsed','yes', {maxAge:900000, httpOnly:true});
         res.end('Body parsed! Value of foo: ' + req.body.foo + '\n');
@@ -78,6 +91,9 @@ try {
             .use(bodyParser())                                                   //deprecated, should find alternatives
             .use(cookieParser('A019IR56w#$HA12345ABhG', 'STPIsTheRacersEdge'))   //can digitally sign cookies
             .use(cookieSession({keys: ['NowIsTheTimeToNodeAllDay12']}))          //digitally sign the session cookie
+            .use('/header', function(req,res){
+                headerHandler(req,res);
+            })
             .use('/home', function (req, res) {
                 homeHandler(req, res);
             })
