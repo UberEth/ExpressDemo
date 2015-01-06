@@ -9,12 +9,11 @@ var serveStatic = require('serve-static');
 var serveIndex = require('serve-index');
 var https = require('https');
 var http  = require('http');
-
 var fs = require('fs');
 
 //Define Middleware
-//Increments session state variable for each 'get'
 
+//Increments session state variable for each 'get'
 homeHandler = function (req, res) {
     if (req.session.views) {
         req.session.views++;
@@ -25,6 +24,7 @@ homeHandler = function (req, res) {
     res.end('Total views for you: ' + req.session.views + ' \n');
 };
 
+//clears cookie if cookie is set
 toggleHandler = function(req, res){
     if (req.cookies.name) {
         res.clearCookie('name');
@@ -36,6 +36,7 @@ toggleHandler = function(req, res){
     }
 };
 
+//digitally signs cookie
 signedHandler = function(req, res){
     if (req.signedCookies.name) {
         res.clearCookie('name');
@@ -48,6 +49,7 @@ signedHandler = function(req, res){
     }
 };
 
+//just goofing around
 cookieJunk = function(req,res){
     if(req.cookies.parsed){
         console.log('Already Parsed:', req.cookies.parsed);
