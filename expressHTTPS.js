@@ -116,9 +116,11 @@ var options = {
 /* Spin up Servers */
 var server_port = process.env.YOUR_PORT || process.env.PORT || 3000;
 var server_host = process.env.YOUR_HOST || '0.0.0.0';
+var secure_server_port = process.env.YOUR_PORT || process.env.PORT || 3001;
+
 
 try{
-    //Heroku Hack
+    //HTTP
     http.createServer(app).listen(server_port, server_host, function() {
         console.log("HTTP Server Started on host: " + server_host + " Port: " + server_port);
     });
@@ -127,12 +129,12 @@ catch(e){
     console.log("Unable to Start Server on port 80:" + e);
 }
 
-try {
-    //server_2 = https.createServer(options, app).listen(443);
-    //console.log("HTTPS Server Started on Port 443");
+try {// HTTPS
+    https.createServer(options, app).listen(secure_server_port, server_host, function() {
+    console.log("HTTP Server Started on host: " + server_host + " Port: " + secure_server_port);
+});
+
 }
 catch(e){
     console.log("Unable to Start HTTPS Server: " + e)
-
-
 }
