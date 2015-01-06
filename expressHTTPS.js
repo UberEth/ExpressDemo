@@ -115,7 +115,7 @@ var options = {
 
 /* Spin up Servers */
 try{
-    server = http.createServer(app).listen(80);
+    server = http.createServer(app).listen(3000);
     console.log("HTTP Server Started on Port 3000");
 }
 catch(e){
