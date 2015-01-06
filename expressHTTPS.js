@@ -120,7 +120,7 @@ var server_host = process.env.YOUR_HOST || '0.0.0.0';
 try{
     //Heroku Hack
     http.createServer(app).listen(server_port, server_host, function() {
-        console.log("HTTP Server Started on Port 3000");
+        console.log("HTTP Server Started on host: " + server_host + " Port: " + server_port);
     });
 }
 catch(e){
