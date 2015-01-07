@@ -12,14 +12,15 @@ var http  = require('http');
 var fs = require('fs');
 var logger = require('morgan')
 
-//Setup Access Logs
-try {
+//Setup Access Logs - commented out for Heroku
+/*try {
     var accessLogStream = fs.createWriteStream(__dirname + '/public/files/access.log', {flags: 'a'});
 }
 catch(e){
     console.log("Error creating Access Log File");
     throw(e);
 }
+*/
 
 //Define Middleware
 
@@ -106,7 +107,7 @@ cookieJunk = function(req,res){
 //Configure Middleware App
 try {
     var app = express()
-            .use(logger('combined', {stream: accessLogStream}))
+            //.use(logger('combined', {stream: accessLogStream}))                //Commented out for Heroku
             .use(serveStatic(__dirname + '/public'))                             //static roots
             .use(serveIndex(__dirname +  '/public'))                             //static filesystem
             .use(bodyParser())                                                   //deprecated, should find alternatives
