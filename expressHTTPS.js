@@ -10,18 +10,30 @@ var serveIndex = require('serve-index');
 var https = require('https');
 var http  = require('http');
 var fs = require('fs');
+var logger = require('morgan')
+
+//Setup Access Logs
+try {
+    var accessLogStream = fs.createWriteStream(__dirname + '/public/files/access.log', {flags: 'a'});
+}
+catch(e){
+    console.log("Error creating Access Log File");
+    throw(e);
+}
 
 //Define Middleware
 
 //Increments session state variable for each 'get'
 homeHandler = function (req, res) {
+
     if (req.session.views) {
         req.session.views++;
     }
     else {
         req.session.views = 1;
     }
-    res.end('Total views for you: ' + req.session.views + ' \n');
+    dumpReqHeaders(req,res);
+    res.end('\nTotal views for you: ' + req.session.views + ' \n');
 };
 
 //clears cookie if cookie is set
@@ -50,18 +62,26 @@ signedHandler = function(req, res){
 };
 
 headerHandler = function(req,res){
-    dumpHeaders(req,res);
+    dumpReqHeaders(req,res);
+    dumpResHeaders(req,res);
     res.end("Header Dump\n")
-}
+};
 
-dumpHeaders = function(req,res){
+dumpReqHeaders = function(req,res){
     res.write("<Request Headers\>"+ "\n");
+    res.write("request type: " + req.method + "\n" );
+    res.write("request url: " + req.originalUrl + "\n");
+    res.write("request path: " + req.path + "\n");
 
     var reqJason = JSON.parse(JSON.stringify(req.headers));
     for(var myKey in reqJason) res.write(myKey + ": " + reqJason[myKey] + "\n");
 
     res.write("\</Request Headers\>\n")
-}
+};
+
+dumpResHeaders = function(req, res){
+     return true;
+};
 
 //just goofing around
 cookieJunk = function(req,res){
@@ -86,6 +106,7 @@ cookieJunk = function(req,res){
 //Configure Middleware App
 try {
     var app = express()
+            .use(logger('combined', {stream: accessLogStream}))
             .use(serveStatic(__dirname + '/public'))                             //static roots
             .use(serveIndex(__dirname +  '/public'))                             //static filesystem
             .use(bodyParser())                                                   //deprecated, should find alternatives
