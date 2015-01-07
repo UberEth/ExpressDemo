@@ -163,7 +163,7 @@ try{
     });
 }
 catch(e){
-    console.log("Unable to Start Server on port 80:" + e);
+    console.log("Unable to Start Server on port:" + e);
 }
 
 try {// HTTPS
